@@ -1,0 +1,17 @@
+{
+  "name": "coverage",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node extract.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "beautify": "0.0.8",
+    "clean-css": "^4.2.1",
+    "puppeteer-core": "^2.0.0"
+  }
+}
