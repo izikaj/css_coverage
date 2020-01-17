@@ -20,9 +20,9 @@ const paths = [
   '/services/assignment-expert',
 ];
 const operations = [
-  { on: 'page', method: 'hover', selector: '.drop' },
-  { on: 'page', method: 'hover', selector: '.suggest_website a' },
-  { on: 'page', method: 'hover', selector: '.header_links a' },
+  { on: 'page', method: 'hover', args: '.drop' },
+  { on: 'page', method: 'hover', args: '.suggest_website a' },
+  { on: 'page', method: 'hover', args: '.header_links a' },
 ]
 const versions = {
   desktop: {
@@ -81,9 +81,20 @@ async function asyncForEach(array, callback) {
 }
 
 async function makeOperations({ page, hoverable, device }) {
-  await asyncForEach(operations, async ({on, method, ...params}) => {
-    console.log('makeOperations: ', { method, params });
+  await asyncForEach(operations, async ({on, method, args, ...params}) => {
+    console.log('makeOperations: ', { method, args });
     try {
+      let target = null;
+      switch (on) {
+        case 'page':
+          target = page
+          break;
+
+        default:
+          return;
+      }
+
+      target.call(method, args)
     } catch (error) {
       // console.log('OPERATION ERROR:', error);
     }
@@ -221,7 +232,7 @@ function findHoverable(css) {
 }
 
 function purify(css) {
-  return css.replace(/\s*!important;?$/, ';')
+  return css.replace(/\s*!important/, '')
 }
 
 (async () => {
