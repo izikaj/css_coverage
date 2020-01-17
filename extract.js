@@ -20,9 +20,9 @@ const paths = [
   '/services/assignment-expert',
 ];
 const operations = [
-  { on: 'page', method: 'hover', args: '.drop' },
-  { on: 'page', method: 'hover', args: '.suggest_website a' },
-  { on: 'page', method: 'hover', args: '.header_links a' },
+  { method: 'hover', args: '.drop' },
+  { method: 'hover', args: '.drop .drop_nav a' },
+  { method: 'hover', args: '.drop.wide_drop' },
 ]
 const versions = {
   desktop: {
@@ -74,6 +74,11 @@ const versions = {
   },
 };
 
+const HOVER_BLACKLIST = [
+  /^.easy-autocomplete/,
+  /^.select2/,
+];
+
 async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
     await callback(array[index], index, array);
@@ -81,25 +86,6 @@ async function asyncForEach(array, callback) {
 }
 
 async function makeOperations({ page, hoverable, device }) {
-  await asyncForEach(operations, async ({on, method, args, ...params}) => {
-    console.log('makeOperations: ', { method, args });
-    try {
-      let target = null;
-      switch (on) {
-        case 'page':
-          target = page
-          break;
-
-        default:
-          return;
-      }
-
-      target.call(method, args)
-    } catch (error) {
-      // console.log('OPERATION ERROR:', error);
-    }
-  });
-
   if (!device.isMobile) {
     await asyncForEach(hoverable, async (selector) => {
       try {
@@ -109,6 +95,24 @@ async function makeOperations({ page, hoverable, device }) {
       }
     });
   }
+
+  await asyncForEach(operations, async ({method, args, ...params}) => {
+    console.log('makeOperations: ', { method, args });
+
+    try {
+      switch (method) {
+        case 'hover':
+          await page.hover(args);
+          break;
+
+        default:
+          return;
+      }
+
+    } catch (error) {
+      // console.log('OPERATION ERROR:', { target, method }, error);
+    }
+  });
 }
 
 async function getCoverage({ page, path, device, kind, hoverable }) {
@@ -206,11 +210,6 @@ function extractByRanges(content, ranges = []) {
   }).join('\n\n');
 }
 
-const HOVER_BLACKLIST = [
-  /^.easy-autocomplete/,
-  /^.select2/,
-];
-
 function filterBlackListedSelectors(items) {
   return Array.from(items).filter(selector => {
     for (let index = 0; index < HOVER_BLACKLIST.length; index++) {
@@ -232,7 +231,7 @@ function findHoverable(css) {
 }
 
 function purify(css) {
-  return css.replace(/\s*!important/, '')
+  return css.replace(/\s*!important/g, '');
 }
 
 (async () => {
@@ -266,18 +265,19 @@ function purify(css) {
     });
   });
 
-  const raw = Object.keys(ranges).map((src) => {
+  const raw = purify(Object.keys(ranges).map((src) => {
     return extractByRanges(contents[src], ranges[src]);
-  }).join('\n\n\n');
+  }).join('\n\n\n'));
 
-  await fs.writeFile(`full_css.css`, beautify(raw, { format: 'css' }));
-  // await fs.writeFile(`full_css.css`, beautify(raw, { format: 'css' }));
+  await fs.writeFile(`dist/app.css`, beautify(raw, { format: 'css' }));
 
   const cssOptimizations = new cleanCSS({
     format: 'beautify',
   }).minify(raw);
+
   console.log(cssOptimizations.errors, cssOptimizations.warnings, cssOptimizations.stats);
-  await fs.writeFile(`full_clean_css.css`, purify(cssOptimizations.styles));
+
+  await fs.writeFile(`dist/application.css`, cssOptimizations.styles);
 
   await browser.close();
 })();

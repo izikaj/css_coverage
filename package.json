@@ -2,12 +2,14 @@
   "name": "coverage",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "extract.js",
+  "homepage": "https://github.com/izikaj/css_coverage",
+  "repository": "git@github.com:izikaj/css_coverage.git",
   "scripts": {
     "start": "node extract.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "IzikAJ",
   "license": "ISC",
   "dependencies": {
     "beautify": "0.0.8",
