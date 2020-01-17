@@ -156,6 +156,10 @@ h1 {
     padding-top: 3px;
 }
 
+.suggest_website a:hover {
+    text-decoration: none;
+}
+
 .header_social {
     float: right;
     margin-top: 66px;
@@ -243,6 +247,12 @@ h1 {
 
 .header_nav>ul li a {
     text-decoration: none;
+}
+
+.header_nav>ul li a:hover {
+    color: #4d4d4d;
+    border-bottom: #a5baed 2px solid;
+    padding-bottom: 11px;
 }
 
 .header_nav>ul li.active a {
@@ -434,6 +444,10 @@ h1 {
     line-height: 24px;
 }
 
+.footer_links ul li a:hover {
+    text-decoration: none;
+}
+
 .footer_links ul li:first-child {
     padding-left: 0;
 }
@@ -470,6 +484,10 @@ h1 {
 .footer_links.footer_services ul li a {
     color: #99a5d8;
     text-decoration: none;
+}
+
+.footer_links.footer_services ul li a:hover {
+    text-decoration: underline;
 }
 
 .footer_logo {
@@ -511,6 +529,10 @@ h1 {
     outline: none;
 }
 
+.like:hover,.like:checked {
+    background-position: left -49px;
+}
+
 .like:not(:checked) {
     opacity: 0.5;
 }
@@ -527,6 +549,10 @@ h1 {
     height: 49px;
     -webkit-appearance: none;
     outline: none;
+}
+
+.dislike:hover,.dislike:checked {
+    background-position: right -49px;
 }
 
 .dislike:not(:checked) {
@@ -553,6 +579,10 @@ h1 {
     width: 280px;
     position: relative;
     margin: 20px auto 0;
+}
+
+.show_more .button_show_more:hover {
+    background-color: #e6fbff;
 }
 
 .contact_form {
@@ -637,6 +667,10 @@ h1 {
     font-weight: 400;
 }
 
+.review_details .review_details_item a:hover {
+    text-decoration: none;
+}
+
 .review_details .review_details_item b {
     margin-left: 5px;
 }
@@ -676,6 +710,10 @@ h1 {
     color: #fff;
     float: right;
     width: 87px;
+}
+
+.review_details .review_details_item .button_try_now:hover {
+    background-color: #73ace7;
 }
 
 .review_details_nav {
@@ -741,6 +779,10 @@ h1 {
     float: left;
 }
 
+.general_rating .general_rating_links .button_review:hover {
+    background-color: #eaf9ff;
+}
+
 .general_rating .general_rating_links .button_visit {
     border-radius: 5px;
     -moz-border-radius: 5px;
@@ -753,6 +795,10 @@ h1 {
     -webkit-box-shadow: inset 0px -2px 0 #e6520a;
     color: #fff;
     float: right;
+}
+
+.general_rating .general_rating_links .button_visit:hover {
+    background-color: #e87119;
 }
 
 .general_rating .site_screen {
@@ -892,6 +938,10 @@ h1 {
     margin-top: 11px;
 }
 
+.general_rating .general_rating_content .service_details .button_rate:hover {
+    background-color: #eaf9ff;
+}
+
 .customers_reviews {
     overflow: hidden;
 }
@@ -955,6 +1005,10 @@ h1 {
     color: #3f94ff;
     font-size: 15px;
     font-style: italic;
+}
+
+.message .message_title a:hover,.message .message_title .reviewed_service:hover {
+    text-decoration: none;
 }
 
 .message .message_content {
@@ -1128,6 +1182,10 @@ h1 {
     font-size: 20px;
     text-transform: uppercase;
     margin: 20px auto 0;
+}
+
+.review_details_tabs .contact_form .button_post:hover {
+    background-color: #e87119;
 }
 
 .contact_content_mobile,.sidebar_mobile,.general_rating_mobile,.review_details_mobile,.rate_post_mobile {
@@ -1359,6 +1417,10 @@ h1 {
     color: #80c3fb;
 }
 
+.top_service_item .top_service_details .button_review:hover {
+    background-color: #eaf9ff;
+}
+
 .top_service_item .top_service_details .button_website {
     border-radius: 5px;
     -moz-border-radius: 5px;
@@ -1370,6 +1432,10 @@ h1 {
     -moz-box-shadow: inset 0px -2px 0 #e6520a;
     -webkit-box-shadow: inset 0px -2px 0 #e6520a;
     color: #fff;
+}
+
+.top_service_item .top_service_details .button_website:hover {
+    background-color: #e87119;
 }
 
 .widget_best_dicounts {

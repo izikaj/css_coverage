@@ -20,11 +20,9 @@ const paths = [
   '/services/assignment-expert',
 ];
 const operations = [
-  {
-    on: 'page',
-    method: 'hover',
-    selector: '.drop',
-  }
+  { on: 'page', method: 'hover', selector: '.drop' },
+  { on: 'page', method: 'hover', selector: '.suggest_website a' },
+  { on: 'page', method: 'hover', selector: '.header_links a' },
 ]
 const versions = {
   desktop: {
@@ -82,24 +80,27 @@ async function asyncForEach(array, callback) {
   }
 }
 
-async function makeOperations({ page }) {
+async function makeOperations({ page, hoverable, device }) {
   await asyncForEach(operations, async ({on, method, ...params}) => {
-    switch (on) {
-      case 'page':
-        switch ('method') {
-          case 'hover':
-            await page.hover(params.selector);
-
-            break;
-          default:
-            break;
-        }
-        break;
+    console.log('makeOperations: ', { method, params });
+    try {
+    } catch (error) {
+      // console.log('OPERATION ERROR:', error);
     }
   });
+
+  if (!device.isMobile) {
+    await asyncForEach(hoverable, async (selector) => {
+      try {
+        await page.hover(selector);
+      } catch (error) {
+        // console.log('OPERATION ERROR:', error);
+      }
+    });
+  }
 }
 
-async function getCoverage({ page, path, device, kind }) {
+async function getCoverage({ page, path, device, kind, hoverable }) {
   await page.emulate(device);
   await page.coverage.startCSSCoverage({
     resetOnNavigation: true,
@@ -107,12 +108,21 @@ async function getCoverage({ page, path, device, kind }) {
   const relative = path.replace(origin, '');
   console.log(`Visit: [${kind}] ${relative} vith ${device.name}`);
   await page.goto(path);
-  await makeOperations({page});
+  await makeOperations({ page, hoverable, device });
   await page.screenshot({ path: `screens/${kind}_${device.name}.jpg`, fullPage: true });
 
   const coverage = await page.coverage.stopCSSCoverage();
 
   return coverage.filter(src => src.url.startsWith(origin));
+}
+
+async function getAllHoverable({ page, path }) {
+  console.log('getAllHoverable', {path})
+  await page.coverage.startCSSCoverage();
+  await page.goto(path);
+  let coverage = await page.coverage.stopCSSCoverage();
+  css = coverage.filter(src => src.url.startsWith(origin)).map(src => src.text).join('\n\n');
+  return findHoverable(css);
 }
 
 function findMediaRanges(content) {
@@ -185,6 +195,35 @@ function extractByRanges(content, ranges = []) {
   }).join('\n\n');
 }
 
+const HOVER_BLACKLIST = [
+  /^.easy-autocomplete/,
+  /^.select2/,
+];
+
+function filterBlackListedSelectors(items) {
+  return Array.from(items).filter(selector => {
+    for (let index = 0; index < HOVER_BLACKLIST.length; index++) {
+      if (HOVER_BLACKLIST[index].test(selector)) {
+        return false;
+      }
+    }
+    return true;
+  });
+}
+
+function findHoverable(css) {
+  const regex = /(?:^|,|})([^,}]*?):hover/mg
+  const hoverable = filterBlackListedSelectors(
+    new Set(css.match(regex).map(s => s.replace(/^[},]\s*/, '').replace(/:hover$/, '')))
+  );
+  console.log(`Found ${hoverable.length} hoverable selectors`);
+  return hoverable;
+}
+
+function purify(css) {
+  return css.replace(/\s*!important;?$/, ';')
+}
+
 (async () => {
   const browser = await puppeteer.launch({
     executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
@@ -195,15 +234,14 @@ function extractByRanges(content, ranges = []) {
   await page.emulateMediaType('screen');
   await page.authenticate(credentials);
 
-  const report = {};
-  let contents = {}
-  let ranges = {}
+  let contents = {};
+  let ranges = {};
+  let hoverable = await getAllHoverable({ page, path: `${origin}${paths[0]}` });
 
   await asyncForEach(Object.entries(versions), async ([kind, params]) => {
-    report[kind] = {}
     await asyncForEach(params.devices, async (device) => {
       await asyncForEach(paths, async (path) => {
-        const cov = await getCoverage({ page, path: `${origin}${path}`, kind, device });
+        const cov = await getCoverage({ page, path: `${origin}${path}`, kind, device, hoverable });
         cov.forEach(src => {
           contents[src.url] = src.text
           ranges[src.url] = [
@@ -228,7 +266,7 @@ function extractByRanges(content, ranges = []) {
     format: 'beautify',
   }).minify(raw);
   console.log(cssOptimizations.errors, cssOptimizations.warnings, cssOptimizations.stats);
-  await fs.writeFile(`full_clean_css.css`, cssOptimizations.styles);
+  await fs.writeFile(`full_clean_css.css`, purify(cssOptimizations.styles));
 
   await browser.close();
 })();
