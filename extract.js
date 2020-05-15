@@ -5,24 +5,62 @@ var cleanCSS = require('clean-css');
 // for: chrome-79
 const puppeteer = require('puppeteer-core');
 
-const origin = 'http://topwritingreviews.writershub.org';
+// const origin = 'https://topwritingreviews.writershub.org';
 // const origin = 'https://topwritingreviews.com';
+// const origin = 'https://ratedbystudents.writershub.org/';
+// const origin = 'https://ratedbystudents.com';
+// const origin = 'https://essayguard.writershub.org/';
+// const origin = 'https://essayguard.com';
+// const origin = 'https://alltopreviews.writershub.org/';
+// const origin = 'https://alltopreviews.com/';
+
+const origin = 'https://supremedissertations.com/';
+
+
 const credentials = {
   username: 'develop',
   password: 'trohim',
 };
 const paths = [
-  '/services/rewarded-essays',
-  '/services/getacademichelp',
-  '/services/justbuyessay',
-  '/services/helpfulpapers',
-  '/services/essay-ws',
-  '/services/assignment-expert',
+  '/best-dissertation-writers',
+  '/custom-dissertation-help',
+  '/write-my-dissertation',
+  '/writing-services/editing-and-proofreading-services',
+  '/writing-services/more-services',
+  '/writing-services/thesis-writing-service',
+  '/writing-services/buy-dissertations',
+
+  // ATR
+  // '/services/evoessay',
+  // '/services/hotessayservice',
+  // '/services/rewardedessays',
+  // '/services/essaythinker',
+  // '/services/grabmyessay',
+
+  // // EG
+  // '/services/essaypanda',
+  // '/services/rewardedessays',
+  // '/services/smartcustomwriting',
+  // '/services/powered-essays',
+  // '/services/trustessays',
+
+  // // RbS
+  // '/services/vipessayservice',
+  // '/services/supremedissertations',
+  // '/services/procustomwriting',
+  // '/services/essaykittens',
+  // '/services/getacademichelp',
+
+  // TWR
+  // '/services/getacademichelp',
+  // '/services/justbuyessay',
+  // '/services/helpfulpapers',
+  // '/services/essay-ws',
+  // '/services/assignment-expert',
 ];
 const operations = [
-  { method: 'hover', args: '.drop' },
-  { method: 'hover', args: '.drop .drop_nav a' },
-  { method: 'hover', args: '.drop.wide_drop' },
+  { method: 'hover', args: '.drop_list' },
+  { method: 'hover', args: '.drop_list ul li a' },
 ]
 const versions = {
   desktop: {
