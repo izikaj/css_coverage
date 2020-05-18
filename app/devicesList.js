@@ -19,7 +19,7 @@ const galaxyNote3 = devices['Galaxy Note 3'];
 const iPhone4 = devices['iPhone 4'];
 const iPhoneX = devices['iPhone X'];
 
-const devices = {
+const devicesList = {
   // single devices:
   // desktop
   macBookPro,
@@ -37,4 +37,4 @@ const devices = {
   mobile: [galaxyNote3, iPhone4, iPhoneX],
 }
 
-module.exports = devices;
+module.exports = devicesList;

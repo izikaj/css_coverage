@@ -6,6 +6,10 @@ const makeHeatMap = require('./utils/makeHeatMap');
 const findBreakpoints = require('./utils/findBreakpoints');
 const rangesByHeatmap = require('./utils/rangesByHeatmap');
 const extractByRanges = require('./utils/extractByRanges');
+const padTo = require('./utils/padTo');
+
+const isValidCSS = require('./utils/isValidCSS');
+const normalizeCSS = require('./utils/normalizeCSS');
 
 async function extractCriticalByStats(data) {
   const namespace = codeName('crit', data.src);
@@ -15,13 +19,18 @@ async function extractCriticalByStats(data) {
   const points = findBreakpoints(hmap);
   console.log(`breakpoints: ${[0, ...points]}`);
 
-  await fs.writeFile(`dist/${namespace}_0.css`, data.content);
+  await fs.writeFile(`dist/${namespace}_${padTo(0)}.css`, data.content);
   await asyncForEach(points, async (min) => {
     const ranges = rangesByHeatmap(hmap, min);
-    crit = extractByRanges(data.content, ranges);
+    const criticalContent = extractByRanges(data.content, ranges);
 
-    if (crit && crit.length > 0) {
-      await fs.writeFile(`dist/${namespace}_${min}.css`, crit);
+    if (await isValidCSS(criticalContent)) {
+      console.log(`store step: ${min} of ${namespace}`);
+
+      await fs.writeFile(
+        `dist/${namespace}_${padTo(min)}.css`,
+        normalizeCSS(criticalContent)
+      );
     }
   });
 }

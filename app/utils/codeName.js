@@ -1,6 +1,6 @@
 function codeName(...parts) {
   return parts.map(p => {
-    return p.toString()
+    return (p || '').toString()
       .toLowerCase()
       .replace(/https?:\/\//g, '')
       .replace(/\w+\.cloudfront\.net\//g, '')

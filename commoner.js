@@ -1,6 +1,6 @@
 const fs = require('fs').promises;
 const beautify = require('beautify');
-var cleanCSS = require('clean-css');
+const cleanCSS = require('clean-css');
 
 // for: chrome-79
 const puppeteer = require('puppeteer-core');

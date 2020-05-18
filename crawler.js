@@ -5,12 +5,13 @@ const fs = require('fs').promises;
 const cleanFolder = require('./app/utils/cleanFolder');
 const asyncForEach = require('./app/utils/asyncForEach');
 const authorize = require('./app/utils/authorize');
-const devices = require('./app/devices');
+const devicesList = require('./app/devicesList');
 
 const extractCriticalByStats = require('./app/extractCriticalByStats');
 const collectCSSCoverageStats = require('./app/collectCSSCoverageStats');
 
-const origin = 'https://bestessay.education';
+// const origin = 'https://bestessay.education';
+const origin = 'https://alltopreviews.com';
 
 const credentials = {
   username: 'develop',
@@ -18,18 +19,37 @@ const credentials = {
 };
 
 const devices = [
-  ...devices.desktop,
-  ...devices.tablet,
-  ...devices.mobile,
+  ...devicesList.desktop,
+  ...devicesList.tablet,
+  ...devicesList.mobile,
 ];
 
 let links = [
-  '/account/orders/new',
-  '/account/discounts',
-  '/account/profile/edit',
-  '/account/credits',
-  '/account/feedbacks',
-  '/account/referrals',
+  '/',
+  '/best-wordpress-plugins-for-content',
+  '/blog',
+  '/blog/are-essay-writing-services-safe-lets-take-a-closer-look',
+  '/blog/what-is-a-phd',
+  '/can-you-plagiarize-your-own-work',
+  '/compare',
+  '/discounts',
+  '/policy',
+  '/services',
+  '/services/bestessays',
+  '/services/edubirdie',
+  '/terms',
+  '/tips',
+  '/tips/great-definition-essay-topic-prompts',
+  '/tips/how-to-write-a-thesis-proposal',
+  '/what-we-do',
+  '/writing-contest',
+
+  // '/account/orders/new',
+  // '/account/discounts',
+  // '/account/profile/edit',
+  // '/account/credits',
+  // '/account/feedbacks',
+  // '/account/referrals',
 ];
 
 (async () => {
@@ -54,7 +74,7 @@ let links = [
   }
   console.log('Start crawling...');
 
-  const raw = await collectCSSCoverageStats({devices, links});
+  const raw = await collectCSSCoverageStats({ devices, links, origin, page });
 
   console.log('Crawling finished!');
 

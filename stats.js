@@ -8,6 +8,7 @@ const fs = require('fs').promises;
 const asyncForEach = require('./app/utils/asyncForEach');
 const cleanFolder = require('./app/utils/cleanFolder');
 const extractCriticalByStats = require('./app/extractCriticalByStats');
+const validateDistCSS = require('./app/validateDistCSS');
 
 (async () => {
   console.log('Start stats counting...');
@@ -18,4 +19,6 @@ const extractCriticalByStats = require('./app/extractCriticalByStats');
   await asyncForEach(dump, async (data) => {
     await extractCriticalByStats(data);
   });
+
+  await validateDistCSS();
 })();
