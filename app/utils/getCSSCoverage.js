@@ -1,8 +1,8 @@
 const path = require('path');
-const codeName = require('./code_name');
-const removeOffscreen = require('./remove_offscreen');
+const codeName = require('./codeName');
+const removeOffscreen = require('./removeOffscreenElements');
 
-async function getCoverage({ page, link, device, origin, relative }) {
+async function getCSSCoverage({ page, link, device, origin, relative }) {
   await page.emulate(device);
   const url = path.join(origin, link);
   console.log(`Visit: ${link} WITH ${device.name}`);
@@ -26,4 +26,4 @@ async function getCoverage({ page, link, device, origin, relative }) {
   });
 }
 
-module.exports = getCoverage;
+module.exports = getCSSCoverage;

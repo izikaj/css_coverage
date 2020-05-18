@@ -1,4 +1,4 @@
-async function removeOffscreen(page) {
+async function removeOffscreenElements(page) {
   await page.evaluate(_ => {
     if (typeof(jQuery) === 'function') {
       jQuery.expr.filters.offscreen = function (el) {
@@ -14,4 +14,4 @@ async function removeOffscreen(page) {
   });
 }
 
-module.exports = removeOffscreen;
+module.exports = removeOffscreenElements;

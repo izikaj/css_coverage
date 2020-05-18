@@ -1,49 +1,26 @@
-// for: chrome-79
 const puppeteer = require('puppeteer-core');
-
-// deps
 const fs = require('fs').promises;
 
-// const path = require('path');
-// const beautify = require('beautify');
-// const cleanCSS = require('clean-css');
-
 // utils
-const findMediaRanges = require('./utils/find_media_ranges');
-const asyncForEach = require('./utils/async_for_each');
-const cleanFolder = require('./utils/clean_folder');
-// const waitForJQuery = require('./utils/wait_for_jquery');
-// const removeOffscreen = require('./utils/remove_offscreen');
-const authorize = require('./utils/authorize');
-const getCoverage = require('./utils/get_coverage');
+const cleanFolder = require('./app/utils/cleanFolder');
+const asyncForEach = require('./app/utils/asyncForEach');
+const authorize = require('./app/utils/authorize');
+const devices = require('./app/devices');
+
+const extractCriticalByStats = require('./app/extractCriticalByStats');
+const collectCSSCoverageStats = require('./app/collectCSSCoverageStats');
 
 const origin = 'https://bestessay.education';
+
 const credentials = {
   username: 'develop',
   password: 'trohim',
 };
-const macBookPro = {
-  name: 'MacBook Pro 2015',
-  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.87 Safari/537.36',
-  viewport: {
-    width: 1440,
-    height: 789,
-    deviceScaleFactor: 2,
-    isMobile: false,
-    hasTouch: false,
-    isLandscape: true
-  }
-};
+
 const devices = [
-  // desctop devices
-  // macBookPro,
-  // tablet devices
-  // puppeteer.devices['iPad Mini'],
-  // puppeteer.devices['iPad Pro'],
-  // mobile devices
-  puppeteer.devices['Galaxy Note 3'],
-  puppeteer.devices['iPhone 4'],
-  puppeteer.devices['iPhone X'],
+  ...devices.desktop,
+  ...devices.tablet,
+  ...devices.mobile,
 ];
 
 let links = [
@@ -56,7 +33,7 @@ let links = [
 ];
 
 (async () => {
-  await cleanFolder('./dist');
+  await cleanFolder('./dist', (name) => /crit_/.test(name));
   await cleanFolder('./screens');
 
   const browser = await puppeteer.launch({
@@ -77,32 +54,16 @@ let links = [
   }
   console.log('Start crawling...');
 
+  const raw = await collectCSSCoverageStats({devices, links});
 
-  let contents = {};
-  let ranges = {};
-
-  await asyncForEach(devices, async (device) => {
-    await asyncForEach(links, async (link) => {
-      const cov = await getCoverage({page, device, origin, link});
-      cov.forEach(src => {
-        contents[src.url] = src.text
-        ranges[src.url] = [
-          ...(ranges[src.url] || []),
-          ...src.ranges,
-          ...findMediaRanges(src.text),
-        ]
-      });
-    });
-  });
-
-  const raw = Object.keys(ranges).map((src) => {
-    return {
-      src: src,
-      content: contents[src],
-      ranges: ranges[src],
-    };
-  });
-  await fs.writeFile(`dist/dump.json`, JSON.stringify(raw));
+  console.log('Crawling finished!');
 
   await browser.close();
+  await fs.writeFile(`dist/dump.json`, JSON.stringify(raw));
+
+  console.log('Start stats counting...');
+
+  await asyncForEach(raw, async (data) => {
+    await extractCriticalByStats(data);
+  });
 })();

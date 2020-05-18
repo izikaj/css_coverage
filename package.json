@@ -9,6 +9,7 @@
     "start": "node extract.js",
     "commoner": "node commoner.js",
     "crawler": "node crawler.js",
+    "stats": "node stats.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "IzikAJ",

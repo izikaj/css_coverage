@@ -1,4 +1,4 @@
-const waitForJQuery = require('./wait_for_jquery');
+const waitForJQuery = require('./waitForJQuery');
 
 async function authorize(page) {
   const credentials = { email: '123@mailinator.com', password: '123123123' };
