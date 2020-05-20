@@ -7,9 +7,10 @@
   "repository": "git@github.com:izikaj/css_coverage.git",
   "scripts": {
     "start": "node extract.js",
-    "commoner": "node commoner.js",
     "crawler": "node crawler.js",
     "stats": "node stats.js",
+    "checkcss": "node checkcss.js",
+    "amp_css": "node amp_css.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "IzikAJ",

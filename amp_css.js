@@ -25,31 +25,11 @@ const devices = [
 ];
 
 let links = [
-  '/',
-  // '/best-wordpress-plugins-for-content',
-  // '/blog',
-  // '/blog/are-essay-writing-services-safe-lets-take-a-closer-look',
-  // '/blog/what-is-a-phd',
-  // '/can-you-plagiarize-your-own-work',
-  // '/compare',
-  // '/discounts',
-  // '/policy',
-  // '/services',
-  // '/services/bestessays',
-  // '/services/edubirdie',
-  // '/terms',
-  // '/tips',
-  // '/tips/great-definition-essay-topic-prompts',
-  // '/tips/how-to-write-a-thesis-proposal',
-  // '/what-we-do',
-  // '/writing-contest',
-
-  // '/account/orders/new',
-  // '/account/discounts',
-  // '/account/profile/edit',
-  // '/account/credits',
-  // '/account/feedbacks',
-  // '/account/referrals',
+  // '/',
+  '/services',
+  '/services/p/2',
+  '/services/p/8',
+  '/services?utf8=✓&sort=top-rated&category_id=1&samples=true&title=',
 ];
 
 (async () => {
@@ -62,7 +42,7 @@ let links = [
   });
   const page = await browser.newPage();
 
-  await page.setJavaScriptEnabled(true);
+  await page.setJavaScriptEnabled(false);
   await page.emulateMediaType('screen');
   await page.authenticate(credentials);
 
@@ -74,7 +54,13 @@ let links = [
   }
   console.log('Start crawling...');
 
-  const raw = await collectCSSCoverageStats({ devices, links, origin, page });
+  const raw = await collectCSSCoverageStats({
+    devices,
+    links,
+    origin,
+    page,
+    fullPage: true,
+  });
 
   console.log('Crawling finished!');
 

@@ -1,4 +1,4 @@
-const devices = require('puppeteer/DeviceDescriptors');
+const devices = require('puppeteer-core/DeviceDescriptors');
 
 const macBookPro = {
   name: 'MacBook Pro 2015',
