@@ -11,7 +11,10 @@ const extractCriticalByStats = require('./app/extractCriticalByStats');
 const collectCSSCoverageStats = require('./app/collectCSSCoverageStats');
 
 // const origin = 'https://bestessay.education';
-const origin = 'https://alltopreviews.com';
+// const origin = 'https://alltopreviews.com';
+// const origin = 'https://essayguard.com';
+const origin = 'https://topwritingreviews.com/';
+// const origin = 'https://ratedbystudents.com/';
 
 const credentials = {
   username: 'develop',
@@ -25,11 +28,12 @@ const devices = [
 ];
 
 let links = [
-  // '/',
-  '/services',
-  '/services/p/2',
-  '/services/p/8',
-  '/services?utf8=✓&sort=top-rated&category_id=1&samples=true&title=',
+  '/',
+  // '/services',
+  // '/services/p/2',
+  // '/services/p/7',
+  // '/services?sort=delivery',
+  // '/services?category_id=1',
 ];
 
 (async () => {

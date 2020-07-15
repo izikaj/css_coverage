@@ -26,11 +26,14 @@ async function extractCriticalByStats(data) {
 
     if (await isValidCSS(criticalContent)) {
       console.log(`store step: ${min} of ${namespace}`);
+      const normalized = normalizeCSS(criticalContent);
 
-      await fs.writeFile(
-        `dist/${namespace}_${padTo(min)}.css`,
-        normalizeCSS(criticalContent)
-      );
+      if (normalized.length > 0) {
+        await fs.writeFile(
+          `dist/${namespace}_${padTo(min)}.css`,
+          normalized,
+        );
+      }
     }
   });
 }

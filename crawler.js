@@ -11,7 +11,12 @@ const extractCriticalByStats = require('./app/extractCriticalByStats');
 const collectCSSCoverageStats = require('./app/collectCSSCoverageStats');
 
 // const origin = 'https://bestessay.education';
-const origin = 'https://alltopreviews.com';
+// const origin = 'https://ratedbystudents.com';
+// const origin = 'https://topwritingreviews.com/';
+// const origin = 'http://topessaywriting.writershub.org';
+// const origin = 'https://alltopreviews.com/';
+const origin = 'https://essayguard.com/';
+
 
 const credentials = {
   username: 'develop',
@@ -25,31 +30,35 @@ const devices = [
 ];
 
 let links = [
-  '/',
-  // '/best-wordpress-plugins-for-content',
-  // '/blog',
-  // '/blog/are-essay-writing-services-safe-lets-take-a-closer-look',
-  // '/blog/what-is-a-phd',
-  // '/can-you-plagiarize-your-own-work',
-  // '/compare',
-  // '/discounts',
-  // '/policy',
-  // '/services',
-  // '/services/bestessays',
-  // '/services/edubirdie',
-  // '/terms',
-  // '/tips',
-  // '/tips/great-definition-essay-topic-prompts',
-  // '/tips/how-to-write-a-thesis-proposal',
-  // '/what-we-do',
-  // '/writing-contest',
+  // '/',
 
-  // '/account/orders/new',
-  // '/account/discounts',
-  // '/account/profile/edit',
-  // '/account/credits',
-  // '/account/feedbacks',
-  // '/account/referrals',
+  // '/about',
+  // '/all-the-truth-about-online-plagiarism-check-software',
+  // '/awards',
+  // '/contacts',
+  // '/cookie-policy-text',
+  // '/how-to-cheat-plagiarism-detection-software',
+  // '/how-to-find',
+  // '/how-to-find-an-online-dissertation-writing-service',
+  // '/how-to-find-the-perfect-custom-thesis-writing-service',
+  // '/how-to-get-thesis-writing-assistance',
+  // '/learn-how-to-stay-focused',
+  // '/policy',
+  // '/proofreading-tools',
+  // '/research-essay-topics-to-engage-and-impress',
+  // '/secrets-of-the-best-essay-writing-services',
+  // '/terms',
+  // '/writing-the-dissertation-proposal',
+
+  // '/blog',
+  // '/blog/p/2',
+  // '/blog/how-many-words-is-a-5-page-paper',
+  // '/blog/pokemon-go-the-most-trendy-app-in-2016',
+
+  // '/services',
+  // '/services/p/2',
+  // '/services/edubirdie',
+  // '/services/essaythinker',
 ];
 
 (async () => {

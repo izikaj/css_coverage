@@ -16,7 +16,7 @@ function findBreakpoints(hmap) {
     if (count >= prev) { return; }
 
     prev = count;
-    steps.push((min + 1));
+    steps.push((min));
   });
 
   return steps;

@@ -9,6 +9,7 @@ function isValidCSS(content) {
     validateCss({ text: content }, function (_, { validity, errors, warnings }) {
       if (!validity) {
         console.log({ validity, errors_count: errors.length, warnings_count: warnings.length });
+        // console.warn(errors);
       }
       const error_types = errors.map(e => e.type);
 

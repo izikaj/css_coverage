@@ -1,6 +1,7 @@
 const path = require('path');
 const codeName = require('./codeName');
-const removeOffscreen = require('./removeOffscreenElements');
+const removeOffscreenElements = require('./removeOffscreenElements');
+const refreshCSSCoverage = require('./refreshCSSCoverage');
 
 async function getCSSCoverage({ page, link, device, origin, fullPage }) {
   await page.emulate(device);
@@ -10,7 +11,7 @@ async function getCSSCoverage({ page, link, device, origin, fullPage }) {
 
   await page.goto(url);
   if (!fullPage) {
-    await removeOffscreen(page);
+    await removeOffscreenElements(page);
   }
   await page.screenshot({ path: `screens/${visit_type}.jpg`, fullPage: fullPage });
 
@@ -18,11 +19,16 @@ async function getCSSCoverage({ page, link, device, origin, fullPage }) {
     resetOnNavigation: true,
   });
 
-  const coverage = await page.coverage.stopCSSCoverage();
+  let coverage = await page.coverage.stopCSSCoverage();
+
+  if (!fullPage) {
+    coverage = await refreshCSSCoverage({page, coverage});
+  }
 
   return coverage.filter(src => {
     return (
       /\.cloudfront\.net/.test(src.url) ||
+      /\/assets\//.test(src.url) ||
       src.url.startsWith(origin)
     );
   });

@@ -1,6 +1,6 @@
 const asyncForEach = require('./utils/asyncForEach');
-const findMediaRanges = require('./utils/findMediaRanges');
-const getCoverage = require('./utils/getCSSCoverage');
+const findNestedRuleRanges = require('./utils/findNestedRuleRanges');
+const getCSSCoverage = require('./utils/getCSSCoverage');
 
 async function collectCSSCoverageStats({ devices, links, origin, page, fullPage }) {
   let contents = {};
@@ -8,13 +8,13 @@ async function collectCSSCoverageStats({ devices, links, origin, page, fullPage 
 
   await asyncForEach(devices, async (device) => {
     await asyncForEach(links, async (link) => {
-      const cov = await getCoverage({ page, device, origin, link, fullPage });
+      const cov = await getCSSCoverage({ page, device, origin, link, fullPage });
       cov.forEach(src => {
         contents[src.url] = src.text;
         ranges[src.url] = [
           ...(ranges[src.url] || []),
           ...src.ranges,
-          ...findMediaRanges(src.text),
+          ...findNestedRuleRanges(src.text),
         ];
       });
     });

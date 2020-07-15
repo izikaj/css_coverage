@@ -13,10 +13,11 @@ const macBookPro = {
   }
 };
 
-const iPadMini = devices['iPad Mini'];
+const iPad = devices['iPad'];
 const iPadPro = devices['iPad Pro'];
 const galaxyNote3 = devices['Galaxy Note 3'];
 const iPhone4 = devices['iPhone 4'];
+const iPhone8plus = devices['iPhone 8 Plus'];
 const iPhoneX = devices['iPhone X'];
 
 const devicesList = {
@@ -24,17 +25,18 @@ const devicesList = {
   // desktop
   macBookPro,
   // tablet
-  iPadMini,
+  iPad,
   iPadPro,
   // mobile
   galaxyNote3,
   iPhone4,
   iPhoneX,
+  iPhone8plus,
 
   // groups:
   desktop: [macBookPro],
-  tablet: [iPadMini, iPadPro],
-  mobile: [galaxyNote3, iPhone4, iPhoneX],
+  tablet: [iPad, iPadPro],
+  mobile: [galaxyNote3, iPhone4, iPhoneX, iPhone8plus],
 }
 
 module.exports = devicesList;
