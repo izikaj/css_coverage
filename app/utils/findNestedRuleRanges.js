@@ -1,11 +1,15 @@
 function findNestedRuleRanges(content) {
-  const nestedRuleRegex = /(@[\w\-]+\s*[^\;]+?)\{([^{]*|.*?\}\s*)\}/mg;
+  const simpleRuleRegex = /\{[^{}]*\}/mg;
+  const mediaRuleRegex = /(@[^{};]+\{)([^{}]*)\}/mg;
   const ranges = []
 
+  // remove unnested rules
+  content = content.replace(simpleRuleRegex, (a) => (new Array(a.length + 1)).join('_'))
+
   let match;
-  while (match = nestedRuleRegex.exec(content)) {
+  while (match = mediaRuleRegex.exec(content)) {
     const start = match.index
-    const end = start + match[1].length + 1
+    const end = start + match[1].length
     const start2 = start + match[0].length - 1
     const end2 = start + match[0].length
 

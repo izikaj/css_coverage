@@ -23,10 +23,12 @@ async function hasVisibleTarget(page, selector) {
       const node = list[ii];
       var rect = node.getBoundingClientRect();
       var invisible = (
-        (rect.x + rect.width) < 0
-        || (rect.y + rect.height) < 0
-        || (rect.x > window.innerWidth || rect.y > window.innerHeight)
+        (rect.x + rect.width) < 0 ||
+        (rect.y + rect.height) < 0 ||
+        rect.x > window.innerWidth ||
+        rect.y > window.innerHeight
       );
+
       if (!invisible) {
         return true;
       }
@@ -40,7 +42,7 @@ function isCovered(index, ranges)
 
   for (let ii = 0; ii < ranges.length; ii++) {
     const at = ranges[ii];
-    if (index >= at.start && index < at.end) {
+    if ((index >= at.start) && (index <= at.end)) {
       return true;
     }
   }
@@ -59,9 +61,11 @@ async function cleanItem(page, item) {
     }
   })
 
-  let match;
+  let match, cursor, data;
   while (match = lineRegex.exec(content)) {
-    if (!isCovered(match.index, item.ranges)) {
+    data = match[1].trim();
+    cursor = match.index + /^\s*/.exec(match[1])[0].length;
+    if (!isCovered(cursor, item.ranges)) {
       // skip uncovered selectors
       continue;
     }
