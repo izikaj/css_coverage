@@ -5,5 +5,5 @@ dist/*
 !.keep
 .DS_Store
 
-credentials.yml
-!credentials.yml.sample
+*.yml
+!*.yml.sample

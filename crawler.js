@@ -36,7 +36,7 @@ let links = [...CONFIG.links];
 
 const fullPage = false;
 const loadTimeout = 1000;
-const maxPoints = 2;
+const maxPoints = 5;
 
 (async () => {
   await cleanFolder('./dist', (name) => /crit_/.test(name));

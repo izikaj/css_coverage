@@ -29,6 +29,7 @@ async function extractCriticalByStats(data, params = {}) {
     const criticalContent = extractByRanges(data.content, ranges);
 
     if (await isValidCSS(criticalContent)) {
+      console.warn(`OK: HEAT POINT ${min} products valid CSS!`);
       console.log(`store step: ${min} of ${namespace}`);
       const normalized = normalizeCSS(criticalContent);
 
@@ -38,6 +39,8 @@ async function extractCriticalByStats(data, params = {}) {
           normalized,
         );
       }
+    } else {
+      console.warn(`BAD: HEAT POINT ${min} products invalid CSS!`);
     }
   });
 }
