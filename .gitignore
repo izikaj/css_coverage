@@ -1,0 +1,9 @@
+node_modules/
+screens/*
+dist/*
+
+!.keep
+.DS_Store
+
+credentials.yml
+!credentials.yml.sample
