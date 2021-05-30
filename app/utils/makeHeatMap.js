@@ -1,19 +1,27 @@
 const SEP = '$';
 
+const makeBlankMap = (size, value = 0) => {
+  const result = [];
+  for (let i = 0; i < size; i++) {
+    result[i] = value;
+  }
+  return result;
+}
+
 function makeHeatMap(src) {
   const amount = src.ranges.length;
-  const step = amount > 1000 ? Math.floor(amount * 0.1) : 0;
-  const map = new Array(src.content.length).join(SEP).split(SEP).map(() => 0);
+  const step = amount > 5000 ? Math.floor(amount * 0.1) : 0;
+  const map = makeBlankMap(src.content.length);
 
-  src.ranges.forEach((range, cursor) => {
+  for (let cursor = 0; cursor < src.ranges.length; cursor++) {
+    const range = src.ranges[cursor];
     if (step > 0 && cursor % step === 0) {
       console.log(`work progess ${cursor}/${amount}`);
     }
-    let pointer = range.start;
-    while (pointer <= range.end) {
-      map[pointer++]++;
+    for (let pt = range.start; pt < range.end; pt++) {
+      map[pt]++;
     }
-  });
+  }
 
   return map;
 }

@@ -52,20 +52,28 @@ const removeOwlStyles = {
 const removeUselessStyles = {
   level1: {
     value: function (propertyName, propertyValue) {
-      if (propertyName == 'background') {
-        if (/gradient/i.test(propertyValue)) {
-          return propertyValue;
-        }
-        if (/^(#[0-9a-f]{3,8}|rgb\(.+\)|rgba\(.+\)|none|transparent)$/i.test(propertyValue)) {
-          return propertyValue;
-        }
-        return '';
+      switch (propertyName) {
+        case 'background':
+          if (/gradient/i.test(propertyValue)) {
+            return propertyValue;
+          }
+          if (/^(#[0-9a-f]{3,8}|rgb\(.+\)|rgba\(.+\)|none|transparent)$/i.test(propertyValue)) {
+            return propertyValue;
+          }
+          return '';
+
+        case 'font-size':
+          if (/^\d+$/.test(propertyValue)) {
+            return '';
+          }
+          break;
       }
+
       return propertyValue;
     },
     property: function (rule, property) {
       // remove cursor style
-      if (/^(cursor|outline|background\-(image|repeat|position|size))$/.test(property.name)) {
+      if (/^(cursor|transition|outline|background\-(image|repeat|position|size))$/.test(property.name)) {
         property.unused = true;
       }
       // remove select2 visibility-hidden
@@ -80,17 +88,40 @@ const removeUselessStyles = {
   }
 };
 
+const removeEmptyProperties = {
+  level1: {
+    property: function (rule, property) {
+      if (/\.owl\-(carousel|item)/.test(rule)) {
+        property.unused = true;
+      }
+      for (const prop of property.value) {
+        if (!/^\s*$/.test(prop[1])) {
+          return;
+        }
+      }
+      property.unused = true;
+    }
+  }
+};
+
 const plugins = [
   removeFontFace,
   removePrefixedProperties,
   removeOwlStyles,
   removeUselessStyles,
+  removeEmptyProperties,
 ];
 
-function normalizeCSS(content) {
-  const minified = new CleanCSS({ format, level: 2, plugins }).minify(content);
-
-  console.warn('minify:', minified.stats);
+function normalizeCSS(content, strong = false) {
+  let params = { format, level: 1 };
+  if (strong) {
+    params = {
+      ...params,
+      plugins,
+      level: 2,
+    };
+  }
+  const minified = new CleanCSS(params).minify(content);
 
   return minified.styles;
 }

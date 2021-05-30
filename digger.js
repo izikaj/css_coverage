@@ -7,6 +7,7 @@ const urlsFromArgs = require('./app/utils/urlsFromArgs');
 const findSimilarByStats = require('./app/digg/findSimilarByStats');
 const cleanComputed = require('./app/digg/cleanComputed');
 const makeMinimalizedCommon = require('./app/digg/makeMinimalizedCommon');
+const customGroups = require('./app/digg/customGroups');
 
 const roots = urlsFromArgs();
 console.warn(roots);
@@ -36,9 +37,11 @@ const walker = (root) => {
     // This will be called for each crawled page
     callback: function (error, res, done) {
       if (error || (res && res.statusCode >= 400)) {
+        console.warn('');
         console.warn('   !!!!!!!!!!!!!!!!!!!!!!   ');
         console.warn(res && res.statusCode, error);
         console.warn('   !!!!!!!!!!!!!!!!!!!!!!   ');
+        console.warn('');
         errors.push({
           error,
           res
@@ -59,7 +62,11 @@ const walker = (root) => {
     findSimilarByStats({
       similar, debugs,
     });
+    if (Object.keys(computed).length === 0) {
+      customGroups({ similar, computed });
+    }
     cleanComputed({ stats, computed });
+
     const minimal = makeMinimalizedCommon({ similar, computed });
 
     const resultData = { origin, minimal, similar, computed, stats, visited, debugs, errors };

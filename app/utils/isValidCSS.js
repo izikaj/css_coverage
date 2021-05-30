@@ -10,7 +10,6 @@ function isValidCSS(content) {
     const errors = validate(content);
     if (errors.length > 0) {
       console.log('!!!!!!!!!!!!!!!!!!!!!!!');
-      console.log('!!!!!!!!!!!!!!!!!!!!!!!');
       console.log(' --- CSS-Tree ERROR ---');
       errors.forEach((err) => {
         console.log(`  ${err.message}!`)
@@ -19,17 +18,17 @@ function isValidCSS(content) {
         console.log('  ---------------');
       });
       console.log('!!!!!!!!!!!!!!!!!!!!!!!');
-      console.log('!!!!!!!!!!!!!!!!!!!!!!!');
     }
-    // resolve(errors.length <= 0);
+    if (errors.length === 0) {
+      return resolve(true);
+    }
     validateCss({ text: content }, function (_, { validity, errors, warnings }) {
       if (!validity) {
-        console.log({ validity, errors_count: errors.length, err: errors[0], warnings_count: warnings.length });
-        // console.warn(errors);
+        console.log({ validity, errors_count: errors.length, warnings_count: warnings.length, err: errors[0] });
       }
-      const error_types = errors.map(e => e.type);
-
-      resolve(error_types.indexOf('generator.unrecognize') === -1);
+      // const error_types = errors.map(e => e.type);
+      // resolve(error_types.indexOf('generator.unrecognize') === -1);
+      resolve(true);
     });
   });
 }
