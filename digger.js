@@ -8,6 +8,7 @@ const findSimilarByStats = require('./app/digg/findSimilarByStats');
 const cleanComputed = require('./app/digg/cleanComputed');
 const makeMinimalizedCommon = require('./app/digg/makeMinimalizedCommon');
 const customGroups = require('./app/digg/customGroups');
+const extractSelectors = require('./app/digg/extractSelectors');
 
 const roots = urlsFromArgs();
 console.warn(roots);
@@ -24,7 +25,7 @@ const walker = (root) => {
   const similar = [];
   const errors = [];
 
-  console.warn(`Dig ${origin} ...`);
+  console.warn(`Dig ${origin} ...`)
 
   const crawler = new Crawler({
     maxConnections: 5,
@@ -36,6 +37,15 @@ const walker = (root) => {
     },
     // This will be called for each crawled page
     callback: function (error, res, done) {
+      extractSelectors(crawler, res).then(function(selectors) {
+        console.warn(`SELECTORS: ${selectors.length}`, selectors.slice(0, 10));
+      });
+
+      // if (visited.length > 2) {
+      //   console.warn('STOP FOR NOW!!!!');
+      //   process.exit(0);
+      // }
+
       if (error || (res && res.statusCode >= 400)) {
         console.warn('');
         console.warn('   !!!!!!!!!!!!!!!!!!!!!!   ');

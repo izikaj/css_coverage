@@ -98,7 +98,7 @@ async function makeTarget({ target, browser }) {
   console.log('Start stats counting...');
   const parts = [];
   for (const data of raw) {
-    if (!/\.css$/.test(data.src)) {
+    if (!/\.css($|\?)/.test(data.src)) {
       continue;
     }
     const css = await extractCritical({ origin, data, maxPoints, pwd });

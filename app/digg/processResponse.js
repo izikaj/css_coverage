@@ -33,6 +33,7 @@ function processResponse({ crawler, origin, computed, stats, visited, debugs, fo
       if ((visited.indexOf(link.pathname) !== -1) || (found.indexOf(link.pathname) !== -1)) {
         return;
       }
+
       found.push(link.pathname);
       if (/\/p\/\d+/.test(link.pathname)) {
         const page = parseInt(/\/p\/(\d+)/.exec(link.pathname)[1], 10);
@@ -40,6 +41,7 @@ function processResponse({ crawler, origin, computed, stats, visited, debugs, fo
           return;
         }
       }
+
       crawler.queue(new url.URL(link.pathname, rootUrl).href);
     });
 
