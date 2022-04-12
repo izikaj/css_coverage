@@ -41,7 +41,7 @@ const devices = [
   ...devicesList.mobile,
 ];
 const fullPage = false;
-const loadTimeout = 1000;
+const loadTimeout = 3000;
 const maxPoints = 5;
 
 async function pageForLinks(browser, links = []) {

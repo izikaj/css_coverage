@@ -8,6 +8,7 @@
   "scripts": {
     "start": "node extract.js",
     "crawler": "node crawler.js",
+    "watcher": "node watcher.js",
     "digger": "node digger.js",
     "checkcss": "node checkcss.js",
     "amp_css": "node amp_css.js",
@@ -27,7 +28,7 @@
     "css-validator": "^0.9.0",
     "csstree-validator": "^2.0.0",
     "diff": "^5.0.0",
-    "lighthouse": "^7.1.0",
+    "lighthouse": "^7.5.0",
     "mime": "^2.5.2",
     "puppeteer-core": "^2.1.1",
     "rimraf": "^3.0.2",
