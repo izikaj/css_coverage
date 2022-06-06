@@ -6,7 +6,7 @@ const YAML = require('yaml');
 const cleanFolder = require('./app/utils/cleanFolder');
 const asyncForEach = require('./app/utils/asyncForEach');
 const authorize = require('./app/utils/authorize');
-const devicesList = require('./app/devicesList');
+const devicesList = require('./app/utils/deviceDescriptors');
 
 const extractCriticalByStats = require('./app/extractCriticalByStats');
 const collectCSSCoverageStats = require('./app/collectCSSCoverageStats');

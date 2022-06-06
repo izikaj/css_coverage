@@ -2,13 +2,13 @@ const asyncForEach = require('./utils/asyncForEach');
 const findNestedRuleRanges = require('./utils/findNestedRuleRanges');
 const getCSSCoverage = require('./utils/getCSSCoverage');
 
-async function collectCSSCoverageStats({ devices, links, origin, page, fullPage, loadTimeout }) {
+async function collectCSSCoverageStats({ devices, links, origin, page, fullPage }) {
   let contents = {};
   let ranges = {};
 
   await asyncForEach(devices, async (device) => {
     await asyncForEach(links, async (link) => {
-      const cov = await getCSSCoverage({ page, device, origin, link, fullPage, loadTimeout });
+      const cov = await getCSSCoverage({ page, device, origin, link, fullPage });
       cov.forEach(src => {
         contents[src.url] = src.text;
         ranges[src.url] = [

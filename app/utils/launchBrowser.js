@@ -11,6 +11,7 @@ async function launchBrowser() {
   const browser = await puppeteer.launch({
     headless: isHeadless,
     executablePath: browserApp,
+    // devtools: true,
   });
   return browser;
 }

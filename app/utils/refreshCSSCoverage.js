@@ -3,13 +3,15 @@ const css = require('css');
 const url = require('url');
 const path = require('path');
 
-const BLACKLIST = [
-  {
-    url: 'https://static.botsrv2.com'
-  },
-];
+const BLACKLIST = [{
+  url: 'https://static.botsrv2.com'
+}, ];
 
-async function hasVisibleTarget({ page, selector, cache }) {
+async function hasVisibleTarget({
+  page,
+  selector,
+  cache
+}) {
   if (typeof cache === 'undefined') {
     cache = {};
   }
@@ -96,10 +98,13 @@ const extractMediaRanges = (text, rules) => {
       // console.log(`> [${text.slice(headStart, headEnd)}]`);
       // console.log(`< [${text.slice(tailStart, tailEnd)}]`);
 
-      result.push(
-        { start: headStart, end: headEnd },
-        { start: tailStart, end: tailEnd }
-      );
+      result.push({
+        start: headStart,
+        end: headEnd
+      }, {
+        start: tailStart,
+        end: tailEnd
+      });
       result.push(...extractMediaRanges(text, rule.rules));
     }
   }
@@ -116,7 +121,10 @@ const extractCSSRuleRanges = (text, rules) => {
 
   for (const rule of rules) {
     if (rule.type === 'rule') {
-      const { selectors, position } = rule;
+      const {
+        selectors,
+        position
+      } = rule;
       const start = absPosition(position.start, text);
       const end = absPosition(position.end, text);
 
@@ -139,7 +147,12 @@ const extractCSSRuleRanges = (text, rules) => {
   return result;
 };
 
-async function cleanItem({ page, item, cache }) {
+async function cleanItem({
+  page,
+  item,
+  cache,
+  fullPage,
+}) {
   const ranges = [];
 
   for (const rule of BLACKLIST) {
@@ -153,31 +166,44 @@ async function cleanItem({ page, item, cache }) {
       continue;
     }
     console.log('blacklist report item', item.url, item.text.length, '=> 0');
-    return { ...item, ranges };
+    return {
+      ...item,
+      ranges
+    };
   }
 
+  // skip removing ofscreen for full page
+  if (fullPage) return item;
+
   const c1 = extractByRanges(item.text, item.ranges);
-  if (c1.length === 0) {
-    return item;
-  }
+  if (c1.length === 0) return item;
 
   const mediaRanges = extractMediaRanges(item.text);
   ranges.push(...mediaRanges);
 
   const ruleRanges = extractCSSRuleRanges(item.text);
   for (const rule of ruleRanges) {
-    const { selectors, start, end } = rule;
-    if (!isCovered(start, item.ranges)) {
-      // skip uncovered selectors
-      continue;
-    }
+    const {
+      selectors,
+      start,
+      end
+    } = rule;
 
-    let used = false;
-    let stat = { used: [], unused: [] };
+    // skip uncovered selectors
+    if (!isCovered(start, item.ranges)) continue;
+
+    let used, stat = {
+      used: [],
+      unused: []
+    };
     for (const part of selectors) {
       const selector = part.replace(/:(before|after|hover|active|visited|focus)/g, '');
 
-      if (await hasVisibleTarget({ page, selector, cache })) {
+      if (await hasVisibleTarget({
+          page,
+          selector,
+          cache
+        })) {
         used = true;
         stat.used.push(part);
       } else {
@@ -188,7 +214,10 @@ async function cleanItem({ page, item, cache }) {
       }
     }
     if (used) {
-      ranges.push({ start, end });
+      ranges.push({
+        start,
+        end
+      });
     }
   }
 
@@ -219,14 +248,24 @@ async function cleanItem({ page, item, cache }) {
     // console.log();
   }
 
-  return { ...item, ranges };
+  return {
+    ...item,
+    ranges
+  };
 }
 
-async function refreshCSSCoverage({ page, coverage }) {
+async function refreshCSSCoverage({
+  coverage,
+  ...opts
+}) {
   const refreshed = [];
   const cache = {};
   for (const item of coverage) {
-    refreshed.push(await cleanItem({ page, cache, item }));
+    refreshed.push(await cleanItem({
+      ...opts,
+      cache,
+      item,
+    }));
   }
   return refreshed;
 }

@@ -15,7 +15,7 @@ async function waitForJQuery(page) {
     }
 
     await page.mouse.move(100, 100);
-    await page.waitFor(200);
+    await page.waitForTimeout(200);
   }
 }
 

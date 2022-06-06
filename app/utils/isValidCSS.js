@@ -1,4 +1,3 @@
-const validateCss = require('css-validator');
 const { validate } = require('csstree-validator');
 
 function isValidCSS(content) {
@@ -19,17 +18,7 @@ function isValidCSS(content) {
       });
       console.log('!!!!!!!!!!!!!!!!!!!!!!!');
     }
-    if (errors.length === 0) {
-      return resolve(true);
-    }
-    validateCss({ text: content }, function (_, { validity, errors, warnings }) {
-      if (!validity) {
-        console.log({ validity, errors_count: errors.length, warnings_count: warnings.length, err: errors[0] });
-      }
-      // const error_types = errors.map(e => e.type);
-      // resolve(error_types.indexOf('generator.unrecognize') === -1);
-      resolve(true);
-    });
+    resolve(true);
   });
 }
 

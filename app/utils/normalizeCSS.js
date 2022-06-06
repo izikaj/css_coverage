@@ -1,6 +1,30 @@
 const CleanCSS = require('clean-css');
-const { reporter } = require('csstree-validator/lib/reporter');
-const format = 'beautify';
+// const format = 'beautify';
+// const format = 'keep-breaks';
+const format = {
+  breaks: {
+    afterAtRule: false,
+    afterBlockBegins: true,
+    afterBlockEnds: true,
+    afterComment: false,
+    afterProperty: false,
+    afterRuleBegins: false,
+    afterRuleEnds: true,
+    beforeBlockEnds: true,
+    betweenSelectors: false
+  },
+  breakWith: '\n',
+  indentBy: 0,
+  indentWith: 'space',
+  wrapAt: false,
+  semicolonAfterLastProperty: false
+};
+
+const RULES_BLACKLIST = [
+  /\.owl\-(carousel|item)/,
+  /\#ngProgress/,
+  /\.select2-hidden-accessible/
+];
 
 const removeFontFace = {
   level2: {
@@ -39,11 +63,14 @@ const removePrefixedProperties = {
   }
 };
 
-const removeOwlStyles = {
+const removeBlacklistedRules = {
   level1: {
     property: function (rule, property) {
-      if (/\.owl\-(carousel|item)/.test(rule)) {
-        property.unused = true;
+      for (const item of RULES_BLACKLIST) {
+        if (item.test(rule)) {
+          property.unused = true;
+          break;
+        }
       }
     }
   }
@@ -72,16 +99,8 @@ const removeUselessStyles = {
       return propertyValue;
     },
     property: function (rule, property) {
-      // remove cursor style
+      // remove cursors, transitions & some else styles
       if (/^(cursor|transition|outline|background\-(image|repeat|position|size))$/.test(property.name)) {
-        property.unused = true;
-      }
-      // remove select2 visibility-hidden
-      if (/^(\.select2-hidden-accessible)$/.test(rule)) {
-        property.unused = true;
-      }
-      // remove footer css
-      if (/(\.footer|\.prefooter)/.test(rule)) {
         property.unused = true;
       }
     }
@@ -91,13 +110,8 @@ const removeUselessStyles = {
 const removeEmptyProperties = {
   level1: {
     property: function (rule, property) {
-      if (/\.owl\-(carousel|item)/.test(rule)) {
-        property.unused = true;
-      }
       for (const prop of property.value) {
-        if (!/^\s*$/.test(prop[1])) {
-          return;
-        }
+        if (!/^\s*$/.test(prop[1])) return;
       }
       property.unused = true;
     }
@@ -107,13 +121,16 @@ const removeEmptyProperties = {
 const plugins = [
   removeFontFace,
   removePrefixedProperties,
-  removeOwlStyles,
+  removeBlacklistedRules,
   removeUselessStyles,
   removeEmptyProperties,
 ];
 
-function normalizeCSS(content, strong = false) {
-  let params = { format, level: 1 };
+function normalizeCSS(content, strong = false, fullPage = true) {
+  let params = {
+    format,
+    level: 1
+  };
   if (strong) {
     params = {
       ...params,

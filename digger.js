@@ -9,7 +9,9 @@ const cleanComputed = require('./app/digg/cleanComputed');
 const makeMinimalizedCommon = require('./app/digg/makeMinimalizedCommon');
 const customGroups = require('./app/digg/customGroups');
 const extractSelectors = require('./app/digg/extractSelectors');
+const parsedYaml = require('./app/utils/parsedYaml');
 
+const cred = parsedYaml('credentials.yml').basic;
 const roots = urlsFromArgs();
 console.warn(roots);
 
@@ -31,8 +33,8 @@ const walker = (root) => {
     maxConnections: 5,
     rateLimit: 200,
     auth: {
-      user: 'develop',
-      pass: 'trohim',
+      user: cred.username,
+      pass: cred.password,
       sendImmediately: true
     },
     // This will be called for each crawled page

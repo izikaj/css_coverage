@@ -1,11 +1,10 @@
 const fs = require('fs');
 const path = require('path');
-// const fs = require('fs').promises;
 const rimraf = require('rimraf');
 
 // utils
 const authorize = require('./app/utils/authorize');
-const devicesList = require('./app/devicesList');
+const devicesList = require('./app/utils/deviceDescriptors');
 const codeName = require('./app/utils/codeName');
 
 const extractCritical = require('./app/extractCritical');
@@ -41,12 +40,12 @@ const devices = [
   ...devicesList.mobile,
 ];
 const fullPage = false;
-const loadTimeout = 3000;
 const maxPoints = 5;
 
 async function pageForLinks(browser, links = []) {
   const page = await browser.newPage();
 
+  await page.setDefaultNavigationTimeout(120000);
   await page.setJavaScriptEnabled(true);
   await page.emulateMediaType('screen');
   await page.authenticate(credentials);
@@ -70,7 +69,7 @@ async function getDataIfNeed({ browser, links, target, pwd }) {
     console.log(`Start crawling ${target}...`);
     const page = await pageForLinks(browser, links);
 
-    const raw = await collectCSSCoverageStats({ devices, links, origin, page, fullPage, loadTimeout });
+    const raw = await collectCSSCoverageStats({ devices, links, origin, page, fullPage });
     console.log(`Crawling finished for ${target}`);
 
     fs.writeFileSync(`${pwd}/dump.json`, JSON.stringify(raw));
@@ -88,9 +87,7 @@ async function makeTarget({ target, browser }) {
   const pwd = `./dist/${codename}/__${kind}/`;
 
   console.log(`Making ${target}... [pwd: ${pwd}]`);
-  if (CONFIG.flags.clean) {
-    rimraf.sync(pwd);
-  }
+  if (CONFIG.flags.clean) rimraf.sync(pwd);
   fs.mkdirSync(pwd, { recursive: true });
 
   const raw = await getDataIfNeed({ browser, links, target, pwd });
@@ -113,9 +110,11 @@ async function makeTarget({ target, browser }) {
 }
 
 (async () => {
-  if (typeof CONFIG.minimal === 'undefined') {
-    throw 'No critical data found!';
-  }
+  if (typeof CONFIG.minimal === 'undefined') throw 'No critical data found!';
+
+  rimraf.sync('screens');
+  fs.mkdirSync('screens');
+
   const browser = await launchBrowser();
   for (const target in CONFIG.minimal) {
     await makeTarget({ target, browser });

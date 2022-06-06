@@ -1,9 +1,6 @@
 const atob = require('atob');
 
-const LOST_POIN_COEF = 100;
-
 function metaLookup($, path, stats = {}, computed = {}) {
-  // extract meta[name=critical-css-debug]
   const meta = $('meta[name=critical-css-debug]').attr('content');
   if (meta && meta.length > 0) {
     const data = JSON.parse(atob(meta));

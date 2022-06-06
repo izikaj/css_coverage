@@ -1,23 +1,40 @@
-const puppeteer = require('puppeteer-core');
-const fs = require('fs').promises;
+const fs = require('fs');
+const path = require('path');
+const rimraf = require('rimraf');
 
 // utils
-const cleanFolder = require('./app/utils/cleanFolder');
-const asyncForEach = require('./app/utils/asyncForEach');
 const authorize = require('./app/utils/authorize');
-const devicesList = require('./app/devicesList');
+const devicesList = require('./app/utils/deviceDescriptors');
+const codeName = require('./app/utils/codeName');
 
-const extractCriticalByStats = require('./app/extractCriticalByStats');
+const extractCritical = require('./app/extractCritical');
 const collectCSSCoverageStats = require('./app/collectCSSCoverageStats');
-const urlsFromArgs = require('./app/utils/urlsFromArgs');
+const flagsFromArgs = require('./app/utils/flagsFromArgs');
 const parsedYaml = require('./app/utils/parsedYaml');
+const configFromArgs = require('./app/utils/configFromArgs');
+const normalizeCSS = require('./app/utils/normalizeCSS');
+const launchBrowser = require('./app/utils/launchBrowser');
 
-const origin = urlsFromArgs()[0];
+const flags = flagsFromArgs();
 
-if (!origin) { console.error('No origin provided!'); }
-console.warn('Collect AMP css for site: ', origin);
+const CONFIG = {
+  credentials: parsedYaml('credentials.yml'),
+  ...configFromArgs([2, 3]),
+  flags: {
+    clean: (flags.clean || false),
+    continue: !flags.clean && (flags.continue || flags.C) !== 'false',
+  },
+}
 
-const credentials = parsedYaml('credentials.yml').basic;
+const origin = CONFIG.origin;
+const codename = codeName(origin);
+
+if (!origin) throw console.error('No origin provided!');
+console.warn('Process origin: ', origin);
+
+const credentials = {
+  ...CONFIG.credentials.basic
+};
 
 const devices = [
   ...devicesList.desktop,
@@ -25,25 +42,13 @@ const devices = [
   ...devicesList.mobile,
 ];
 
-let links = [
-  '/',
-  // '/services',
-  // '/services/p/2',
-  // '/services/p/7',
-  // '/services?sort=delivery',
-  // '/services?category_id=1',
-];
+const fullPage = true;
+const maxPoints = 1;
 
-(async () => {
-  await cleanFolder('./dist', (name) => /crit_/.test(name));
-  await cleanFolder('./screens');
-
-  const browser = await puppeteer.launch({
-    headless: true,
-    executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
-  });
+async function pageForLinks(browser, links = []) {
   const page = await browser.newPage();
 
+  await page.setDefaultNavigationTimeout(120000);
   await page.setJavaScriptEnabled(false);
   await page.emulateMediaType('screen');
   await page.authenticate(credentials);
@@ -51,27 +56,104 @@ let links = [
   if (links.filter(p => /^\/account\//.test(p)).length > 0) {
     console.log('Account namespace detected, authorization required!');
 
-    await page.goto(origin);
+    await page.goto(`${origin}${links.filter(p => /^\/account\//.test(p))[0]}`);
     await authorize(page);
   }
-  console.log('Start crawling...');
 
-  const raw = await collectCSSCoverageStats({
-    devices,
-    links,
-    origin,
-    page,
-    fullPage: true,
+  return page;
+}
+
+async function getDataIfNeed({
+  browser,
+  links,
+  target,
+  pwd
+}) {
+  try {
+    if (fs.existsSync(`${pwd}/dump.json`)) {
+      console.log(`Get crawled data from dump!`);
+      return JSON.parse(fs.readFileSync(`${pwd}/dump.json`));
+    }
+    console.log(`Start crawling ${target}...`);
+    const page = await pageForLinks(browser, links);
+
+    const raw = await collectCSSCoverageStats({
+      devices,
+      links,
+      origin,
+      page,
+      fullPage
+    });
+    console.log(`Crawling finished for ${target}`);
+
+    fs.writeFileSync(`${pwd}/dump.json`, JSON.stringify(raw));
+    return raw;
+  } catch (error) {
+    console.error('Fetch coverage data error', error);
+    return [];
+  }
+}
+
+async function makeTarget({
+  target,
+  browser
+}) {
+  const links = CONFIG.minimal[target].paths;
+  const kind = target.replace(/^critical\//, '').replace(/\.css$/, '')
+  const finalPath = `./dist/${codename}/${target}`;
+  const pwd = `./dist/${codename}/__${kind}/`;
+
+  console.log(`Making ${target}... [pwd: ${pwd}]`);
+  if (CONFIG.flags.clean) rimraf.sync(pwd);
+  fs.mkdirSync(pwd, {
+    recursive: true
   });
 
-  console.log('Crawling finished!');
-
-  await browser.close();
-  await fs.writeFile(`dist/dump.json`, JSON.stringify(raw));
+  const raw = await getDataIfNeed({
+    browser,
+    links,
+    target,
+    pwd
+  });
 
   console.log('Start stats counting...');
+  const parts = [];
+  for (const data of raw) {
+    if (!/\.css($|\?)/.test(data.src)) continue;
 
-  await asyncForEach(raw, async (data) => {
-    await extractCriticalByStats(data);
+    const css = await extractCritical({
+      origin,
+      data,
+      maxPoints,
+      pwd
+    });
+    if (css && css.trim().length > 0) parts.push(css.trim());
+  }
+
+  fs.mkdirSync(path.dirname(finalPath), {
+    recursive: true
   });
-})();
+  const result = normalizeCSS(parts.join('\n\n'), true);
+  fs.writeFileSync(finalPath, result);
+}
+
+(async () => {
+  if (typeof CONFIG.minimal === 'undefined') throw 'No critical data found!';
+
+  rimraf.sync('screens');
+
+  const browser = await launchBrowser();
+  for (const target in CONFIG.minimal) {
+    await makeTarget({
+      target,
+      browser
+    });
+  }
+  await browser.close();
+
+})().then(() => {
+  console.log('All is OK');
+}).catch((error) => {
+  console.error('Error Occured', error);
+  process.exit(1);
+});

@@ -34,11 +34,11 @@ async function checkThisCSS({ devices, links, origin, page }) {
         const step = parseInt(/_(\d+)\.css$/.exec(file)[1], 10);
 
         await page.addStyleTag({ path: file });
-        await page.waitFor(100)
+        await page.waitForTimeout(100)
         await page.evaluate(() => {
           window.scrollBy(0, -99999999999);
         });
-        await page.waitFor(100)
+        await page.waitForTimeout(100)
         await page.screenshot({ path: `screens/${visit_type}_critCSS_${padTo(step)}.jpg`, fullPage: false });
       });
     });
