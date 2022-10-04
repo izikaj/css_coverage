@@ -9,6 +9,8 @@ const BLACKLIST = [
   'www.googletagmanager.com',
   '2-vbus-eu.ladesk.com',
   'servicechatforus.ladesk.com',
+  'www.facebook.com',
+  'platform.twitter.com',
 ];
 
 const isBlocked = (link) => {

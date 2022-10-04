@@ -17,7 +17,6 @@ async function checkThisCSS({ devices, links, origin, page }) {
     }
     // if (req.resourceType() === /(font|stylesheet|image|script|xhr|document)/) {
     // }
-
     req.continue();
   });
 
