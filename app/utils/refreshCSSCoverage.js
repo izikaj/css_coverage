@@ -5,7 +5,7 @@ const path = require('path');
 
 const BLACKLIST = [{
   url: 'https://static.botsrv2.com'
-}, ];
+},];
 
 async function hasVisibleTarget({
   page,
@@ -75,8 +75,15 @@ const absPosition = (position, content) => {
 const extractMediaRanges = (text, rules) => {
   const result = [];
   if (typeof rules === 'undefined') {
-    const parsed = css.parse(text);
-    rules = parsed.stylesheet.rules;
+    try {
+      const parsed = css.parse(text);
+      rules = parsed.stylesheet.rules;
+    } catch (error) {
+      console.log('<<<<<<<<< PARSE ERROR');
+      console.log('<<<<<<<<< ', JSON.stringify(text));
+      console.log('<<<<<<<<< ', '-----------------------');
+      rules = [];
+    }
   }
 
   for (const rule of rules) {
@@ -115,8 +122,15 @@ const extractMediaRanges = (text, rules) => {
 const extractCSSRuleRanges = (text, rules) => {
   const result = [];
   if (typeof rules === 'undefined') {
-    const parsed = css.parse(text);
-    rules = parsed.stylesheet.rules;
+    try {
+      const parsed = css.parse(text);
+      rules = parsed.stylesheet.rules;
+    } catch (error) {
+      console.log('<<<<<<<<< PARSE ERROR');
+      console.log('<<<<<<<<< ', JSON.stringify(text));
+      console.log('<<<<<<<<< ', '-----------------------');
+      rules = [];
+    }
   }
 
   for (const rule of rules) {
@@ -200,10 +214,10 @@ async function cleanItem({
       const selector = part.replace(/:(before|after|hover|active|visited|focus)/g, '');
 
       if (await hasVisibleTarget({
-          page,
-          selector,
-          cache
-        })) {
+        page,
+        selector,
+        cache
+      })) {
         used = true;
         stat.used.push(part);
       } else {

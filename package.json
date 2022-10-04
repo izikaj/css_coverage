@@ -14,7 +14,6 @@
     "checkcss": "node checkcss.js",
     "amp_css": "node amp_css.js",
     "critical_css": "node critical_css.js",
-    "perfomance": "node perfomance.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "IzikAJ",
@@ -27,10 +26,8 @@
     "css-tree": "^1.1.2",
     "csso": "^5.0.3",
     "csstree-validator": "^2.0.0",
-    "diff": "^5.0.0",
     "express": "^4.18.1",
     "http-proxy-middleware": "^2.0.6",
-    "lighthouse": "^7.5.0",
     "puppeteer-core": "^13.5.2",
     "rimraf": "^3.0.2",
     "yaml": "^2.0.0"
